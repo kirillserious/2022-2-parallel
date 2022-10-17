@@ -82,4 +82,79 @@
 
     Данное описание было построено в системе Algoload.
     Ниже представлена визуализация в проекциях на плоскости $XY$, $YZ$, $XZ$, а также на плоскость, с которой субъективно лучше всего видно структуру информационного графа рассматриваемого алгоритма.
+    \clearpage
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{graph_xy.png}
+        \newline
+        Рис. 1: Проекция информационного графа по плоскость $XY$
+    \end{center}
+    
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{graph_yz.png}
+        \newline
+        Рис. 2: Проекция информационного графа по плоскость $YZ$
+    \end{center}
+
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{graph_xz.png}
+        \newline
+        Рис 3.: Проекция информационного графа по плоскость $XZ$
+    \end{center}
+
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{graph.png}
+        \newline
+        Рис 4.: Проекция информационного графа по удобную плоскость
+    \end{center}
+    \clearpage
+
+    \section{Характеристики алгоритма}
+    Ниже представлена таблица с посчитанными характеристиками рассматриваемого алгоритма для значений параметров, используемых для построения графа, а также для общего случая.
+    \begin{table}[h]
+        \centering
+        \begin{tabular}[c]{|l|c|c|}
+            \hline
+            Характеристика & $N=4$, $M=3$ & Общий случай \\
+            \hline\hline
+            Последовательная сложность & 68 & $N\cdot(MN + M +2)$ \\
+            \hline
+            Параллельная сложность & 6 & $\mathrm{max}\{N, M\} + \left\lceil \frac{N}{2} \right\rceil$ \\
+            \hline
+            Ширина каноничной ЯПФ & 22 & $\mathrm{max}\{N^2 + (M-2)N + 2,\, 3N\}$ \\
+            \hline
+            Макс. глубина вложенности & 3 & 3 \\
+            \hline
+            Число различных типов дуг & 5  & 5 \\
+            \hline
+            Число длинных дуг & 12 & $N \cdot M$ \\
+            \hline
+        \end{tabular}
+        \caption{Характеристики рассматриваемого алгоритма}
+    \end{table}
+
+    \section{Размещение параллельных циклов}
+    Ниже представлен рассматриваемый алгоритм, дополненный директивами OpenMP.
+
+    \begin{verbatim}
+        for(i = 2; i <= n+1; ++i)
+            C[i] = C[i - 2] + D[i];
+        
+        #pragma omp parallel for
+        for(i = 2; i <= n+1; ++i)
+            for(j = 2; j <= m+1; ++j)
+                B[i][j] = B[i][j - 1] + C[n + 1];
+        
+        #pragma omp parallel for
+        for(i = 2; i <= n+1; ++i){
+            A[i][1][1]= C[i];
+            for(j = 2; j <= m+1; ++j){
+                for(k = 1; k <= n; ++k)
+                    A[i][j][k] = A[i][j - 1][k - 1] + A[i][j][k];
+            }
+        }
+        \end{verbatim}
+    \begin{thebibliography}{9}
+            \bibitem{a} Параллельные вычисления (Воеводин В.В., Воеводин Вл.В.) --- Спб, изд-во <<БХВ-Петербург>>, 2002
+            \bibitem{b} https://algowiki-project.org 
+    \end{thebibliography} 
 \end{document}
