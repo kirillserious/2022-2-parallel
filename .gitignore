@@ -1,0 +1,6 @@
+*.toc
+*.log
+*.Identifier
+*.aux
+*.out
+*-converted-to.pdf
